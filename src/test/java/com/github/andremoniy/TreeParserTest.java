@@ -35,4 +35,40 @@ class TreeParserTest {
         assertEquals(treeString, tree.toString());
     }
 
+    @Test
+    void shouldParseTreeFromStringWithIndexes() {
+        // Given
+        final String treeString = "s(K[..](x1),x1)";
+
+        // When
+        final Tree tree = TreeParser.parse(treeString);
+
+        // Then
+        assertEquals(treeString, tree.toString());
+    }
+
+    @Test
+    void shouldParseTreeFromStringWithIndexes2() {
+        // Given
+        final String treeString = "s(K[a..](x1),x1)";
+
+        // When
+        final Tree tree = TreeParser.parse(treeString);
+
+        // Then
+        assertEquals(treeString, tree.toString());
+    }
+
+    @Test
+    void shouldParseTreeFromStringWithIndexes3() {
+        // Given
+        final String treeString = "K[a..](x1)";
+
+        // When
+        final Tree tree = TreeParser.parse(treeString);
+
+        // Then
+        assertEquals(treeString, tree.toString());
+    }
+
 }

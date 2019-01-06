@@ -1,6 +1,7 @@
 package com.github.andremoniy;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Rule {
 
@@ -43,5 +44,24 @@ public class Rule {
     @Override
     public String toString() {
         return state + ": " + input + ", " + stackRead + " -> " + stackWrite + ", " + Arrays.toString(nextStates);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Rule rule = (Rule) o;
+        return Objects.equals(state, rule.state) &&
+                Objects.equals(input, rule.input) &&
+                Objects.equals(stackRead, rule.stackRead) &&
+                Objects.equals(stackWrite, rule.stackWrite) &&
+                Arrays.equals(nextStates, rule.nextStates);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(state, input, stackRead, stackWrite);
+        result = 31 * result + Arrays.hashCode(nextStates);
+        return result;
     }
 }

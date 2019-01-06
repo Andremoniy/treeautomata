@@ -33,6 +33,7 @@ public class TreeAutomaton {
             }
         }
 
+        System.err.println("No rules applicable to the node [" + node + "] from state [" + currentState + "] and stack [" + stack + "]");
         return false;
     }
 
