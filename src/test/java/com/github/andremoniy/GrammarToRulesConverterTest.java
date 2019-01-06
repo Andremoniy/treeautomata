@@ -13,12 +13,13 @@ class GrammarToRulesConverterTest {
     @Test
     void shouldConvertGrammarToRules1() {
         // Given
-        final String grammar = "" +
-                "S -> P[](b)" +
-                "P[..](x1) —> P[a..](s(b,x1))" +
-                "P[..](x1) —> K[..](s(a,x1))" +
-                "K[a..](x1) —> s(K[..](x1), x1))" +
-                "K[](x1) —> x1";
+        final List<String> grammar = Arrays.asList(
+                "S -> P[](b)",
+                "P[..](x1) -> P[a..](s(b,x1))",
+                "P[..](x1) -> K[..](s(a,x1))",
+                "K[a..](x1) -> s(K[..](x1), x1))",
+                "K[](x1) -> x1"
+        );
 
         final List<Rule> expectedRules = Arrays.asList(
                 new Rule("0", "e", "e", "$", "x1"),

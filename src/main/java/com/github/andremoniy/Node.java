@@ -5,16 +5,23 @@ import java.util.stream.Collectors;
 
 public class Node {
 
+    private final static Deque<String> EMPTY_STACK = new ArrayDeque<>();
+    private final static Deque<String> NON_EMPTY_STACK = new ArrayDeque<>();
+
     private final String label;
     private final List<Node> nodes;
     private final Deque<String> stack;
 
-    public Node(String label, List<Node> nodes) {
+    Node(String label, List<Node> nodes) {
         this.nodes = Collections.unmodifiableList(nodes);
         if (label.contains("[")) {
-            this.stack = new ArrayDeque<>();
             this.label = label.substring(0, label.indexOf("["));
-            if (!label.contains("[..]")) {
+            if (label.contains("[]")) {
+                this.stack = EMPTY_STACK;
+            } else if (label.contains("[..]")) {
+                this.stack = NON_EMPTY_STACK;
+            } else {
+                this.stack = new ArrayDeque<>();
                 stack.add(label.substring(label.indexOf("[") + 1, label.indexOf("..")));
             }
         } else {
@@ -23,19 +30,19 @@ public class Node {
         }
     }
 
-    public List<Node> nodes() {
+    List<Node> nodes() {
         return nodes;
     }
 
-    public String label() {
+    String label() {
         return label;
     }
 
-    public Node node(int nodeId) {
+    Node node(int nodeId) {
         return nodes.get(nodeId);
     }
 
-    public Deque<String> stack() {
+    Deque<String> stack() {
         return stack;
     }
 
@@ -45,6 +52,12 @@ public class Node {
     }
 
     private String stackToString(final Deque<String> stack) {
+        if (stack == EMPTY_STACK) {
+            return "[]";
+        }
+        if (stack == NON_EMPTY_STACK) {
+            return "[..]";
+        }
         return "[" + String.join("", stack) + ".." + "]";
     }
 }

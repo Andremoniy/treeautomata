@@ -7,14 +7,21 @@ import java.util.List;
 public class TreeParser {
 
     public static Tree parse(String treeString) {
-        treeString = treeString.trim();
-        int leftParenthisIndex = treeString.indexOf('(');
-        final String label = treeString.substring(0, leftParenthisIndex > 0 ? leftParenthisIndex : treeString.length()).trim();
-        final List<Node> nodes = leftParenthisIndex > 0
-                ? parseNodes(treeString.substring(leftParenthisIndex + 1, treeString.lastIndexOf(')')).trim())
-                : Collections.emptyList();
+        try {
+            treeString = treeString.trim();
+            int leftParenthisIndex = treeString.indexOf('(');
+            if (leftParenthisIndex < 0) {
+                return new Tree(treeString, Collections.emptyList());
+            }
+            final String label = treeString.substring(0, leftParenthisIndex > 0 ? leftParenthisIndex : treeString.length()).trim();
+            final List<Node> nodes = leftParenthisIndex > 0
+                    ? parseNodes(treeString.substring(leftParenthisIndex + 1, treeString.lastIndexOf(')')).trim())
+                    : Collections.emptyList();
 
-        return new Tree(label, nodes);
+            return new Tree(label, nodes);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse `" + treeString + "`", e);
+        }
     }
 
     private static List<Node> parseNodes(String treeList) {

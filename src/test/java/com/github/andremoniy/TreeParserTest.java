@@ -71,4 +71,28 @@ class TreeParserTest {
         assertEquals(treeString, tree.toString());
     }
 
+    @Test
+    void shouldParseSingleNodeTree() {
+        // Given
+        final String treeString = "S";
+
+        // When
+        final Tree tree = TreeParser.parse(treeString);
+
+        // Then
+        assertEquals(treeString, tree.toString());
+    }
+
+    @Test
+    void shouldParseTreeWithEmptyIndex() {
+        // Given
+        final String treeString = "P[](b)";
+
+        // When
+        final Tree tree = TreeParser.parse(treeString);
+
+        // Then
+        assertEquals(treeString, tree.toString());
+    }
+
 }
