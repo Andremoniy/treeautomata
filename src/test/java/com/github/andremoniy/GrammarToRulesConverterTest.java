@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -17,7 +19,7 @@ class GrammarToRulesConverterTest {
                 "S -> P[](b)",
                 "P[..](x1) -> P[a..](s(b,x1))",
                 "P[..](x1) -> K[..](s(a,x1))",
-                "K[a..](x1) -> s(K[..](x1), x1))",
+                "K[a..](x1) -> s(K[..](x1), x1)",
                 "K[](x1) -> x1"
         );
 
@@ -25,9 +27,9 @@ class GrammarToRulesConverterTest {
                 new Rule("0", "e", "e", "$", "x1"),
                 new Rule("x1", "e", "e", "e", "K[](x1)"),
                 new Rule("K[](x1)", "e", "e", "e", "K[..](x1)"),
+                new Rule("K[..](x1)", "e", "e", "e", "K[..](s(a,x1))"),
                 new Rule("K[..](x1)", "s", "e", "a", "K[..](x1)", "K[a..](x1)"),
                 new Rule("K[a..](x1)", "e", "e", "e", "K[..](s(a,x1))"),
-                new Rule("K[..](x1)", "e", "e", "e", "K[..](s(a,x1))"),
                 new Rule("K[..](s(a,x1))", "s", "e", "e", "a_R", "P[..](x1)"),
                 new Rule("a_R", "a", "e", "e", "a!"),
                 new Rule("P[..](x1)", "e", "a", "e", "P[a..](s(b,x1))"),
@@ -41,6 +43,7 @@ class GrammarToRulesConverterTest {
         final List<Rule> rules = GrammarToRulesConverter.convert(grammar);
 
         // Then
+        System.out.println(rules.stream().map(Objects::toString).collect(Collectors.joining("\n")));
         assertEquals(expectedRules.size(), rules.size());
         assertTrue(expectedRules.containsAll(rules));
     }

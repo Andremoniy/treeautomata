@@ -5,8 +5,8 @@ import java.util.stream.Collectors;
 
 public class Node {
 
-    private final static Deque<String> EMPTY_STACK = new ArrayDeque<>();
-    private final static Deque<String> NON_EMPTY_STACK = new ArrayDeque<>();
+    final static Deque<String> EMPTY_STACK = new ArrayDeque<>();
+    final static Deque<String> NON_EMPTY_STACK = new ArrayDeque<>();
 
     private final String label;
     private final List<Node> nodes;
@@ -59,5 +59,33 @@ public class Node {
             return "[..]";
         }
         return "[" + String.join("", stack) + ".." + "]";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Node node = (Node) o;
+        return Objects.equals(label, node.label) &&
+                Objects.equals(nodes, node.nodes) &&
+                compareStacks(stack, node.stack);
+    }
+
+    // https://stackoverflow.com/questions/18203855/why-doesnt-arraydeque-override-equals-and-hashcode
+    private boolean compareStacks(final Deque<String> stack1, final Deque<String> stack2) {
+        if (stack1 == null && stack2 == null) {
+            return true;
+        }
+
+        if (stack1 == null || stack2 == null) {
+            return false;
+        }
+
+        return new ArrayList<>(stack1).equals(new ArrayList<>(stack2));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(label, nodes, stack);
     }
 }
