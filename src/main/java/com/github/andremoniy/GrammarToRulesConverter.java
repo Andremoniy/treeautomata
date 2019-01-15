@@ -118,7 +118,7 @@ class GrammarToRulesConverter {
                                         && !stateTree.equals(parsedGrammarRule.rhs)
                         ) {
                             if (hasVariable(preState)) {
-                                rulesToAddSet.add(new PreRule(state, Rule.EMPTY, getStackElement(stateTree, parsedGrammarRule), getStackElement(parsedGrammarRule.rhs), new PreState(parsedGrammarRule.rhs.toString(), preState.variableName)));
+                                rulesToAddSet.add(new PreRule(state, Rule.EMPTY, getStackElement(stateTree, parsedGrammarRule), getStackElement(parsedGrammarRule.lhs), new PreState(parsedGrammarRule.rhs.toString(), preState.variableName)));
                             } else {
                                 rulesToAddSet.add(new PreRule(state, Rule.EMPTY, Rule.EMPTY, Rule.EMPTY, parsedGrammarRule.rhs.toString()));
                             }
@@ -134,7 +134,7 @@ class GrammarToRulesConverter {
                             rulesToAddSet.add(new PreRule(
                                     state,
                                     isTerm(correspondingNode) ? correspondingNode.label() : Rule.EMPTY,
-                                    getStackElement(parsedGrammarRule.rhs),
+                                    Rule.EMPTY,
                                     getStackElement(parsedGrammarRule.lhs),
                                     getNextStates(parsedGrammarRule, correspondingNode)
                             ));
@@ -158,7 +158,7 @@ class GrammarToRulesConverter {
         if (node.stack() != Node.EMPTY_STACK && node.stack() != null && parsedGrammarRule.rhs.stack() == Node.EMPTY_STACK) {
             return "$";
         }
-        return Rule.EMPTY;
+        return getStackElement(parsedGrammarRule.rhs);
     }
 
     private static boolean hasVariable(PreState preState) {

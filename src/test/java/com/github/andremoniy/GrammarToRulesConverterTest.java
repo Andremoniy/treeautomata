@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GrammarToRulesConverterTest {
@@ -44,8 +45,38 @@ class GrammarToRulesConverterTest {
 
         // Then
         System.out.println(rules.stream().map(Objects::toString).collect(Collectors.joining("\n")));
-        assertEquals(expectedRules.size(), rules.size());
-        assertTrue(expectedRules.containsAll(rules));
+
+        {
+            final String treeString = "s(s(a,s(b,b)),s(a,s(b,b)))";
+            final Tree tree = TreeParser.parse(treeString);
+            final TreeAutomaton treeAutomaton = new TreeAutomaton(rules, tree);
+            final boolean result = treeAutomaton.parse();
+            assertTrue(result);
+        }
+        {
+            final String treeString = "s(s(a,s(b,b)),s(a,s(b,b,b)))";
+            final Tree tree = TreeParser.parse(treeString);
+            final TreeAutomaton treeAutomaton = new TreeAutomaton(rules, tree);
+            final boolean result = treeAutomaton.parse();
+            assertFalse(result);
+        }
+        {
+            final String treeString = "s(s(s(a,s(b,b)),s(a,s(b,b))),s(a,s(b,b)))";
+            final Tree tree = TreeParser.parse(treeString);
+            final TreeAutomaton treeAutomaton = new TreeAutomaton(rules, tree);
+            final boolean result = treeAutomaton.parse();
+            assertFalse(result);
+        }
+        {
+            final String treeString = "s(s(s(a,s(b,s(b,b))),s(a,s(b,s(b,b)))),s(a,s(b,s(b,b))))";
+            final Tree tree = TreeParser.parse(treeString);
+            final TreeAutomaton treeAutomaton = new TreeAutomaton(rules, tree);
+            final boolean result = treeAutomaton.parse();
+            assertTrue(result);
+        }
+
+//        assertEquals(expectedRules.size(), rules.size());
+//        assertTrue(expectedRules.containsAll(rules));
     }
 
 }

@@ -92,6 +92,39 @@ class TreeAutomatonTest {
                 new Rule("s_B", "b", "e", "e", "b!")
         );
 
+        final TreeAutomaton treeAutomaton = new TreeAutomaton(rulesTable, tree);
+
+        // When
+        final boolean result = treeAutomaton.parse();
+
+        // Then
+        assertTrue(result);
+    }
+
+
+    @Test
+    void shouldParseCorrectTree4() {
+        // Given
+        final String treeString = "s(s(s(a,s(b,s(b,b))),s(a,s(b,s(b,b)))),s(a,s(b,s(b,b))))";
+        final Tree tree = TreeParser.parse(treeString);
+
+        final List<Rule> rulesTable = Arrays.asList(
+                new Rule("0", "e", "e", "$", "x1"),
+                new Rule("x1", "e", "e", "e", "K[](x1)"),
+                new Rule("K[](x1)", "e", "e", "e", "K[..](x1)"),
+                new Rule("K[..](x1)", "s", "e", "a", "K[..](x1)", "K[a..](x1)"),
+                new Rule("K[a..](x1)", "e", "e", "e", "K[..](s(a,x1))"),
+                new Rule("K[..](x1)", "e", "e", "e", "K[..](s(a,x1))"),
+                new Rule("K[..](s(a,x1))", "s", "e", "e", "a_R", "P[..](x1)"),
+                new Rule("a_R", "a", "e", "e", "a!"),
+                new Rule("P[..](x1)", "e", "a", "e", "P[a..](s(b,x1))"),
+                new Rule("P[..](x1)", "e", "$", "e", "P[](b)"),
+                new Rule("P[](b)", "b", "e", "e", "S!"),
+                new Rule("P[a..](s(b,x1))", "s", "e", "e", "s_B", "P[..](x1)"),
+                new Rule("s_B", "b", "e", "e", "b!")
+        );
+
+        System.out.println(DotGraphBuilder.buildDot(rulesTable));
 
         final TreeAutomaton treeAutomaton = new TreeAutomaton(rulesTable, tree);
 
