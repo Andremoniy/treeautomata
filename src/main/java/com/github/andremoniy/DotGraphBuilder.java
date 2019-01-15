@@ -43,7 +43,7 @@ public class DotGraphBuilder {
         dot.append("rankdir=LR;\n");
         dot.append("size=\"8.5\"\n");
         endNodes.forEach(endNode -> dot.append(graphNodesWithLabels.get(endNode)).append(" [ shape = doublecircle, label = \"").append(endNode.endsWith("!") ? endNode.substring(0, endNode.length() - 1) : endNode).append("\" ];\n"));
-        otherNodes.forEach(node -> dot.append(graphNodesWithLabels.get(node)).append(" [ shape = circle, label = \"").append(node, 0, node.length() - 1).append("\" ];\n"));
+        otherNodes.forEach(node -> dot.append(graphNodesWithLabels.get(node)).append(" [ shape = circle, label = \"").append(node).append("\" ];\n"));
         dot.append("\n");
 
         ruleList.forEach(rule -> Stream.of(rule.nextStates()).forEach(
