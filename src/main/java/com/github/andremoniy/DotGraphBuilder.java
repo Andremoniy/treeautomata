@@ -9,12 +9,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DotGraphBuilder {
+class DotGraphBuilder {
 
     private DotGraphBuilder() {
     }
 
-    public static String buildDot(final List<Rule> ruleList) {
+    static String buildDot(final List<Rule> ruleList) {
 
         final Map<String, String> graphNodesWithLabels = new HashMap<>();
         graphNodesWithLabels.put("0", "0");
