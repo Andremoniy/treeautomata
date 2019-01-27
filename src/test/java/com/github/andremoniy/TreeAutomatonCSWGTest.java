@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -36,6 +37,7 @@ class TreeAutomatonCSWGTest {
         // Given
         final String treeString = "s(a,b)";
         final Tree tree = TreeParser.parse(treeString);
+        assertEquals(treeString, tree.toString());
 
         final TreeAutomaton treeAutomaton = new TreeAutomaton(RULES_TABLE, tree);
 
@@ -51,6 +53,7 @@ class TreeAutomatonCSWGTest {
         // Given
         final String treeString = "s(a,b,c)";
         final Tree tree = TreeParser.parse(treeString);
+        assertEquals(treeString, tree.toString());
 
         final TreeAutomaton treeAutomaton = new TreeAutomaton(RULES_TABLE, tree);
 
@@ -66,6 +69,7 @@ class TreeAutomatonCSWGTest {
         // Given
         final String treeString = "s(s(a,s(b,b)),s(a,s(b,b)))";
         final Tree tree = TreeParser.parse(treeString);
+        assertEquals(treeString, tree.toString());
 
         final TreeAutomaton treeAutomaton = new TreeAutomaton(RULES_TABLE, tree);
 
@@ -81,6 +85,7 @@ class TreeAutomatonCSWGTest {
         // Given
         final String treeString = "s(s(s(a,s(b,s(b,b))),s(a,s(b,s(b,b)))),s(a,s(b,s(b,b))))";
         final Tree tree = TreeParser.parse(treeString);
+        assertEquals(treeString, tree.toString());
 
         final TreeAutomaton treeAutomaton = new TreeAutomaton(RULES_TABLE, tree);
 
@@ -96,6 +101,7 @@ class TreeAutomatonCSWGTest {
         // Given
         final String treeString = "s(s(s(a,s(b,s(b,s(b,b)))),s(a,s(b,s(b,b)))),s(a,s(b,s(b,b))))";
         final Tree tree = TreeParser.parse(treeString);
+        assertEquals(treeString, tree.toString());
 
         final TreeAutomaton treeAutomaton = new TreeAutomaton(RULES_TABLE, tree);
 
@@ -111,6 +117,7 @@ class TreeAutomatonCSWGTest {
         // Given
         final String treeString = "s(s(s(a,s(b,s(b,b))),s(a,s(b,s(b,b)))),s(s(a,s(b,s(b,b))),s(a,s(b,s(b,b)))))";
         final Tree tree = TreeParser.parse(treeString);
+        assertEquals(treeString, tree.toString());
 
         final TreeAutomaton treeAutomaton = new TreeAutomaton(RULES_TABLE, tree);
 
@@ -127,6 +134,7 @@ class TreeAutomatonCSWGTest {
         // Given
         final String treeString = "s(s(s(a,s(b,s(b,s(b,b)))),s(a,s(b,s(b,b)))),s(a,s(b,s(b,s(b,b)))))";
         final Tree tree = TreeParser.parse(treeString);
+        assertEquals(treeString, tree.toString());
 
         final TreeAutomaton treeAutomaton = new TreeAutomaton(RULES_TABLE, tree);
 
