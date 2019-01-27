@@ -11,13 +11,22 @@ public class Rule {
     private final String input;
     private final String stackRead;
     private final String stackWrite;
+    private final String[] xStack;
     private final String[] nextStates;
 
-    public Rule(String state, String input, String stackRead, String stackWrite, String... nextStates) {
+    public Rule(
+            final String state,
+            final String input,
+            final String stackRead,
+            final String stackWrite,
+            final String[] xStack,
+            final String... nextStates
+    ) {
         this.state = state;
         this.input = input;
         this.stackRead = stackRead;
         this.stackWrite = stackWrite;
+        this.xStack = xStack;
         this.nextStates = nextStates;
     }
 
@@ -39,6 +48,10 @@ public class Rule {
 
     public String[] nextStates() {
         return nextStates;
+    }
+
+    public String[] getxStack() {
+        return xStack;
     }
 
     @Override

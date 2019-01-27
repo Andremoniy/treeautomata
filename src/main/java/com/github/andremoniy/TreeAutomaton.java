@@ -1,25 +1,37 @@
 package com.github.andremoniy;
 
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class TreeAutomaton {
 
+    private final int debugTab;
     private final List<Rule> rulesTable;
+    private final Stack<int[]> accordanceStack;
     private final Stack<String> stack;
     private final String currentState;
+    private final Map<String, Node> results = new HashMap<>();
     private final Node node;
 
-    private TreeAutomaton(final List<Rule> rulesTable, final Stack<String> stack, final String currentState, final Node node) {
+    private TreeAutomaton(
+            final int debugTab,
+            final List<Rule> rulesTable,
+            final Stack<int[]> accordanceStack,
+            final Stack<String> stack,
+            final String currentState,
+            final Node node
+    ) {
+        this.debugTab = debugTab;
         this.rulesTable = rulesTable;
-        this.stack = stack; // Don't copy!
+        this.accordanceStack = accordanceStack;
+        this.stack = stack;
         this.currentState = currentState;
         this.node = node;
     }
 
     public TreeAutomaton(final List<Rule> rulesTable, final Node node) {
-        this(rulesTable, new Stack<>(), "0", node);
+        this(0, rulesTable, new Stack<>(), new Stack<>(), "0", node);
     }
 
     public boolean parse() {
@@ -33,13 +45,19 @@ public class TreeAutomaton {
             }
         }
 
-        System.err.println("No rules applicable to the node [" + node + "] from state [" + currentState + "] and stack [" + stack + "]");
+//        System.err.println("No rules applicable to the node [" + node + "] from the state [" + currentState + "] and the stack [" + stack + "]");
         return false;
     }
 
     private boolean applyRule(final Rule rule) {
+        final String msg = "-".repeat(debugTab) + "| Node [" + node + "], stack " + stack + ", applying rule [" + rule + "]...";
+        System.out.println(msg);
+        if (rule.getxStack() != null && rule.getxStack().length == 1) {
+            results.put(rule.getxStack()[0], node);
+        }
 
         if (rule.nextStates().length == 1 && rule.nextStates()[0].endsWith("!")) {
+            System.out.println("-".repeat(debugTab) + "!!!");
             return true;
         }
 
@@ -51,23 +69,71 @@ public class TreeAutomaton {
             stackCopy.push(rule.stackWrite());
         }
         if (Rule.EMPTY.equals(rule.input())) {
-            final TreeAutomaton nodeAutomaton = new TreeAutomaton(rulesTable, stackCopy, rule.nextStates()[0], node);
-            return nodeAutomaton.parse();
+            // single node case essentially
+            final TreeAutomaton nodeAutomaton = new TreeAutomaton(debugTab + 1, rulesTable, accordanceStack, stackCopy, rule.nextStates()[0], node);
+            boolean result = nodeAutomaton.parse();
+            if (result && results.isEmpty()) {
+                results.putAll(nodeAutomaton.results);
+            }
+            System.out.println("-".repeat(debugTab) + "..." + result);
+            return result;
         } else {
             final String[] nextStates = rule.nextStates();
             if (nextStates.length != node.nodes().size()) {
-                System.err.println("Number of nodes of [" + node + "] differ from number of states of rule [" + rule + "]");
+                System.err.println("The number of nodes of the node [" + node + "] differs from the number of states of the rule [" + rule + "]");
                 return false;
             }
+            final List<Map<String, Node>> resultsList = new ArrayList<>();
             for (int i = 0; i < nextStates.length; i++) {
                 final String nextState = nextStates[i];
-                final TreeAutomaton nodeAutomaton = new TreeAutomaton(rulesTable, stackCopy, nextState, node.node(i));
+                final TreeAutomaton nodeAutomaton = new TreeAutomaton(debugTab + 1, rulesTable, accordanceStack, stackCopy, nextState, node.node(i));
                 if (!nodeAutomaton.parse()) {
+                    System.out.println("-".repeat(debugTab) + "..." + false);
+                    return false;
+                }
+                resultsList.add(nodeAutomaton.getResults());
+            }
+            boolean result = validateResultsAndMergeWithLocal(resultsList);
+            System.out.println("-".repeat(debugTab) + "..." + result);
+            return result;
+        }
+    }
+
+    private boolean validateResultsAndMergeWithLocal(List<Map<String, Node>> resultsList) {
+        final Set<String> keys = resultsList
+                .stream()
+                .map(Map::keySet)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
+
+        for (String key : keys) {
+            Node lastNode = null;
+            for (Map<String, Node> resultMap : resultsList) {
+                if (lastNode == null) {
+                    lastNode = resultMap.get(key);
+                } else if (!lastNode.equals(resultMap.get(key))) {
                     return false;
                 }
             }
         }
+
+        if (results.isEmpty()) {
+            for (String key : keys) {
+                for (Map<String, Node> resultMap : resultsList) {
+                    final Node value = resultMap.get(key);
+                    if (value != null) {
+                        results.put(key, value);
+                        break;
+                    }
+                }
+            }
+        }
+
         return true;
+    }
+
+    private Map<String, Node> getResults() {
+        return results;
     }
 
     private Stack<String> copyStack(final Stack<String> stack) {

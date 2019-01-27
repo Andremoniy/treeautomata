@@ -43,7 +43,7 @@ class GrammarToRulesConverter {
         }
 
         PreRule(String state, String input, String stackRead, String stackWrite, PreState... nextStates) {
-            super(state, input, stackRead, stackWrite, Arrays.stream(nextStates).map(nextState -> nextState.state).toArray(String[]::new));
+            super(state, input, stackRead, stackWrite, null, Arrays.stream(nextStates).map(nextState -> nextState.state).toArray(String[]::new));
             nextPreStates = nextStates;
         }
     }

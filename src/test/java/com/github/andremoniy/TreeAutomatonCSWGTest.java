@@ -12,17 +12,23 @@ class TreeAutomatonCSWGTest {
 
     // "!" after state name means it is final!
     private static final List<Rule> RULES_TABLE = Arrays.asList(
-            new Rule("0", "e", "e", "$", "1"),
-            new Rule("1", "e", "e", "e", "2"),
-            new Rule("2", "s", "e", "e", "a_R", "4"),
-            new Rule("a_R", "a", "e", "e", "a!"),
-            new Rule("4", "e", "$", "e", "5"),
-            new Rule("5", "b", "e", "e", "S!"),
-            new Rule("4", "e", "e", "e", "6"),
-            new Rule("6", "s", "a", "e", "b_R", "4"),
-            new Rule("b_R", "b", "e", "e", "b!"),
-            new Rule("1", "e", "e", "e", "3"),
-            new Rule("3", "s", "e", "a", "1", "2")
+            new Rule("0", "e", "e", "$", null, "x1"),
+            new Rule("x1", "e", "e", "e", null, "K[..](x1)"),
+            new Rule("K[..](x1)", "e", "e", "e", null, "s(K[..](x1),x1)"),
+            new Rule("s(K[..](x1),x1)", "s", "e", "a", null, "K[..](x1)", "x1_2"),
+            new Rule("x1_2", "e", "e", "e", new String[]{"x1"}, "s(a,x1)"),
+            new Rule("s(a,x1)", "s", "e", "e", null, "a_R", "x1_3"),
+            new Rule("a_R", "a", "e", "e", null, "a!"),
+            new Rule("x1_3", "e", "e", "e", null, "s(b,x1)"),
+            new Rule("s(b,x1)", "s", "e", "e", null, "b_R", "x1_3"),
+            new Rule("x1_3", "b", "e", "e", null, "b!"),
+            new Rule("K[..](x1)", "e", "e", "e", new String[]{"x1"}, "P[a..](s(a,x1))"),
+            new Rule("P[a..](s(a,x1))", "s", "e", "e", null, "a_R", "P[..](x1)"),
+            new Rule("P[..](x1)", "e", "e", "e", null, "P[..](s(b,x1))"),
+            new Rule("P[..](s(b,x1))", "s", "a", "e", null, "b_R", "P[..](x1)"),
+            new Rule("b_R", "b", "e", "e", null, "b!"),
+            new Rule("P[..](x1)", "e", "e", "e", null, "P[](b)"),
+            new Rule("P[](b)", "b", "$", "e", null, "S!")
     );
 
     @Test
@@ -70,5 +76,65 @@ class TreeAutomatonCSWGTest {
         assertTrue(result);
     }
 
+    @Test
+    void shouldParseCorrectTree3() {
+        // Given
+        final String treeString = "s(s(s(a,s(b,s(b,b))),s(a,s(b,s(b,b)))),s(a,s(b,s(b,b))))";
+        final Tree tree = TreeParser.parse(treeString);
+
+        final TreeAutomaton treeAutomaton = new TreeAutomaton(RULES_TABLE, tree);
+
+        // When
+        final boolean result = treeAutomaton.parse();
+
+        // Then
+        assertTrue(result);
+    }
+
+    @Test
+    void shouldNotParseCorrectTree4() {
+        // Given
+        final String treeString = "s(s(s(a,s(b,s(b,s(b,b)))),s(a,s(b,s(b,b)))),s(a,s(b,s(b,b))))";
+        final Tree tree = TreeParser.parse(treeString);
+
+        final TreeAutomaton treeAutomaton = new TreeAutomaton(RULES_TABLE, tree);
+
+        // When
+        final boolean result = treeAutomaton.parse();
+
+        // Then
+        assertFalse(result);
+    }
+
+    @Test
+    void shouldNotParseCorrectTree5() {
+        // Given
+        final String treeString = "s(s(s(a,s(b,s(b,b))),s(a,s(b,s(b,b)))),s(s(a,s(b,s(b,b))),s(a,s(b,s(b,b)))))";
+        final Tree tree = TreeParser.parse(treeString);
+
+        final TreeAutomaton treeAutomaton = new TreeAutomaton(RULES_TABLE, tree);
+
+        // When
+        final boolean result = treeAutomaton.parse();
+
+        // Then
+        assertFalse(result);
+    }
+
+
+    @Test
+    void shouldNotParseCorrectTree6() {
+        // Given
+        final String treeString = "s(s(s(a,s(b,s(b,s(b,b)))),s(a,s(b,s(b,b)))),s(a,s(b,s(b,s(b,b)))))";
+        final Tree tree = TreeParser.parse(treeString);
+
+        final TreeAutomaton treeAutomaton = new TreeAutomaton(RULES_TABLE, tree);
+
+        // When
+        final boolean result = treeAutomaton.parse();
+
+        // Then
+        assertFalse(result);
+    }
 
 }
