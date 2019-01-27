@@ -145,4 +145,15 @@ class TreeAutomatonCSWGTest {
         assertFalse(result);
     }
 
+    @Test
+    void testDotGraphBuilder() {
+        // Given
+
+        // When
+        final String buildDot = DotGraphBuilder.buildDot(RULES_TABLE);
+
+        // Then
+        System.out.println(buildDot);
+
+    }
 }

@@ -1,9 +1,6 @@
 package com.github.andremoniy;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -49,13 +46,36 @@ class DotGraphBuilder {
 
         ruleList.forEach(rule -> {
                     if (rule.nextStates().length == 1) {
-                        dot.append(graphNodesWithLabels.get(rule.state())).append(" -> ").append(graphNodesWithLabels.get(rule.nextStates()[0])).append(" [ label = \"").append(rule.input()).append(", ").append(rule.stackRead()).append("->").append(rule.stackWrite()).append("\" ];\n");
+                        dot
+                                .append(graphNodesWithLabels.get(rule.state()))
+                                .append(" -> ")
+                                .append(graphNodesWithLabels.get(rule.nextStates()[0]))
+                                .append(" [ label = \"")
+                                .append(rule.input())
+                                .append(", ")
+                                .append(rule.stackRead())
+                                .append("->")
+                                .append(rule.stackWrite())
+                                .append(rule.getxStack() != null ? ", " + Arrays.toString(rule.getxStack()) : "")
+                                .append("\" ];\n");
                     } else {
                         final int knotId = nodeCounter.getAndIncrement();
                         dot.append("knot_").append(knotId).append(" [shape=diamond,style=filled,label=\"\",height=.1,width=.1];\n");
-                        dot.append(graphNodesWithLabels.get(rule.state())).append(" -> ").append("knot_").append(knotId).append(" [ label = \"").append(rule.input()).append(", ").append(rule.stackRead()).append("->").append(rule.stackWrite()).append("\" ];\n");
+                        dot
+                                .append(graphNodesWithLabels.get(rule.state()))
+                                .append(" -> ")
+                                .append("knot_")
+                                .append(knotId)
+                                .append(" [ label = \"")
+                                .append(rule.input())
+                                .append(", ")
+                                .append(rule.stackRead())
+                                .append("->")
+                                .append(rule.stackWrite())
+                                .append(rule.getxStack() != null ? ", " + Arrays.toString(rule.getxStack()) : "")
+                                .append("\" ];\n");
                         IntStream.range(0, rule.nextStates().length).forEach(
-                                stateId -> dot.append("knot_").append(knotId).append(" -> ").append(graphNodesWithLabels.get(rule.nextStates()[stateId])).append(" [ label =\"").append(stateId + 1).append("\" ];\n")
+                                stateId -> dot.append("knot_").append(knotId).append(" -> ").append(graphNodesWithLabels.get(rule.nextStates()[stateId])).append(" [ label = \"").append(stateId + 1).append("\" ];\n")
                         );
                     }
                 }

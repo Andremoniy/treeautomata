@@ -56,7 +56,7 @@ public class Rule {
 
     @Override
     public String toString() {
-        return state + ": " + input + ", " + stackRead + " -> " + stackWrite + ", " + Arrays.toString(nextStates);
+        return state + ": " + input + ", " + stackRead + " -> " + stackWrite + ", " + (xStack != null ? Arrays.toString(xStack) + ", " : "") + Arrays.toString(nextStates);
     }
 
     @Override
@@ -68,12 +68,14 @@ public class Rule {
                 Objects.equals(input, rule.input) &&
                 Objects.equals(stackRead, rule.stackRead) &&
                 Objects.equals(stackWrite, rule.stackWrite) &&
+                Arrays.equals(xStack, rule.xStack) &&
                 Arrays.equals(nextStates, rule.nextStates);
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(state, input, stackRead, stackWrite);
+        result = 31 * result + Arrays.hashCode(xStack);
         result = 31 * result + Arrays.hashCode(nextStates);
         return result;
     }
