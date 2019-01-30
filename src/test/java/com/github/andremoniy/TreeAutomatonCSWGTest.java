@@ -97,7 +97,7 @@ class TreeAutomatonCSWGTest {
     }
 
     @Test
-    void shouldNotParseCorrectTree4() {
+    void shouldNotParseIncorrectTree4() {
         // Given
         final String treeString = "s(s(s(a,s(b,s(b,s(b,b)))),s(a,s(b,s(b,b)))),s(a,s(b,s(b,b))))";
         final Tree tree = TreeParser.parse(treeString);
@@ -113,7 +113,7 @@ class TreeAutomatonCSWGTest {
     }
 
     @Test
-    void shouldNotParseCorrectTree5() {
+    void shouldNotParseIncorrectTree5() {
         // Given
         final String treeString = "s(s(s(a,s(b,s(b,b))),s(a,s(b,s(b,b)))),s(s(a,s(b,s(b,b))),s(a,s(b,s(b,b)))))";
         final Tree tree = TreeParser.parse(treeString);
@@ -130,7 +130,7 @@ class TreeAutomatonCSWGTest {
 
 
     @Test
-    void shouldNotParseCorrectTree6() {
+    void shouldNotParseIncorrectTree6() {
         // Given
         final String treeString = "s(s(s(a,s(b,s(b,s(b,b)))),s(a,s(b,s(b,b)))),s(a,s(b,s(b,s(b,b)))))";
         final Tree tree = TreeParser.parse(treeString);

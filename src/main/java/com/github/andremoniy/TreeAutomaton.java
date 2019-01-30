@@ -2,7 +2,6 @@ package com.github.andremoniy;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class TreeAutomaton {
 
@@ -58,6 +57,7 @@ public class TreeAutomaton {
 
         if (rule.nextStates().length == 1 && rule.nextStates()[0].endsWith("!")) {
             System.out.println("-".repeat(debugTab) + "!!!");
+            System.out.println("-".repeat(debugTab) + "..." + results);
             return true;
         }
 
@@ -73,9 +73,10 @@ public class TreeAutomaton {
             final TreeAutomaton nodeAutomaton = new TreeAutomaton(debugTab + 1, rulesTable, accordanceStack, stackCopy, rule.nextStates()[0], node);
             boolean result = nodeAutomaton.parse();
             if (result && results.isEmpty()) {
-                results.putAll(nodeAutomaton.results);
+                results.putAll(transformIfNeeded(rule, nodeAutomaton.results));
             }
             System.out.println("-".repeat(debugTab) + "..." + result);
+            System.out.println("-".repeat(debugTab) + "> " + node + ", " + rule + "::: " + results);
             return result;
         } else {
             final String[] nextStates = rule.nextStates();
@@ -91,12 +92,38 @@ public class TreeAutomaton {
                     System.out.println("-".repeat(debugTab) + "..." + false);
                     return false;
                 }
-                resultsList.add(nodeAutomaton.getResults());
+                resultsList.add(transformIfNeeded(rule, nodeAutomaton.getResults()));
             }
+            System.out.println("-".repeat(debugTab) + "..." + rule + ": " + resultsList);
             boolean result = validateResultsAndMergeWithLocal(resultsList);
             System.out.println("-".repeat(debugTab) + "..." + result);
+            // merge results
+            resultsList.forEach(this.results::putAll);
+            System.out.println("-".repeat(debugTab) + "> " + node + ", " + rule + "::: " + results);
             return result;
         }
+    }
+
+    private Map<String, Node> transformIfNeeded(final Rule rule, final Map<String, Node> results) {
+        if (rule.getxStack() == null) {
+            return results;
+        }
+
+        final Map<String, String> transformMap = new HashMap<>();
+        for (int i = 1; i <= rule.getxStack().length; i++) {
+            transformMap.put("x" + i, rule.getxStack()[i - 1]);
+        }
+
+        final Map<String, Node> transformedResults = new HashMap<>();
+        for (String key : results.keySet()) {
+            final String transformedKey = transformMap.get(key);
+            if (transformedKey == null) {
+                throw new IllegalStateException("Cannot transform key: " + key);
+            }
+            transformedResults.put(transformedKey, results.get(key));
+        }
+
+        return transformedResults;
     }
 
     private boolean validateResultsAndMergeWithLocal(List<Map<String, Node>> resultsList) {
@@ -111,7 +138,8 @@ public class TreeAutomaton {
             for (Map<String, Node> resultMap : resultsList) {
                 if (lastNode == null) {
                     lastNode = resultMap.get(key);
-                } else if (!lastNode.equals(resultMap.get(key))) {
+                } else if (resultMap.containsKey(key) && !lastNode.equals(resultMap.get(key))) {
+                    System.out.println("-".repeat(debugTab) + "x: " + resultsList);
                     return false;
                 }
             }
